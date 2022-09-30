@@ -1,0 +1,183 @@
+Kind,Name,PercentLackOfCohesion,MaxInheritanceTree,CountClassCoupled,CountClassDerived,CountDeclMethodAll,CountDeclMethod
+Class,"AboutDlg",25,2,1,0,53,4
+Abstract Class,"Accessor",89,0,0,2,26,26
+Class,"Action",40,0,0,0,5,5
+Class,"AutoComplete",83,0,3,0,17,17
+Class,"AutoLineLayout",33,0,2,0,6,6
+Class,"AutoSurface",0,0,3,0,5,5
+Class,"Buffer",75,0,6,0,21,21
+Class,"CRC16",0,1,0,0,8,4
+Class,"CRC16_ISO_3309",25,0,0,1,4,4
+Class,"CallTip",68,0,11,0,12,12
+Class,"Caret",0,0,0,0,1,1
+Class,"CellBuffer",85,0,7,0,51,51
+Abstract Class,"CharacterIndexer",0,0,0,1,1,1
+Struct,"CharacterRange",0,0,0,0,0,0
+Class,"ColourAllocated",0,0,0,0,3,3
+Class,"ColourDesired",27,0,0,0,11,11
+Struct,"ColourPair",0,0,2,0,2,2
+Class,"ColourPicker",66,1,2,0,41,9
+Class,"ColourPopup",74,1,1,0,41,9
+Class,"CommentStyleDialog",0,3,4,0,67,8
+Class,"ContractionState",48,0,2,0,18,18
+Class,"ControlsTab",74,2,2,0,72,9
+Class,"Converter",14,0,0,0,7,7
+Class,"DataObject",0,0,1,0,1,1
+Struct,"DlgEtName",0,0,1,0,1,1
+Class,"DocModification",0,0,1,0,2,2
+Class,"DocTabView",50,2,4,0,79,16
+Abstract Class,"DocWatcher",0,0,2,1,6,6
+Class,"Document",94,0,8,0,98,98
+Public Class,"Document::WatcherWithUserData",0,0,1,0,1,1
+Class,"DocumentAccessor",83,1,3,0,51,25
+Class,"DocumentIndexer",0,1,1,0,3,2
+Class,"DropSource",0,0,1,0,1,1
+Class,"DropTarget",0,0,1,0,1,1
+Abstract Class,"DynamicLibrary",0,0,1,2,5,5
+Class,"DynamicLibraryImpl",100,1,0,0,9,4
+Class,"DynamicLibraryImpl",0,1,0,0,9,4
+Abstract Class,"Editor",96,1,36,1,184,178
+Class,"ElapsedTime",25,0,0,0,4,4
+Class,"ExternalLexerModule",50,1,3,0,12,4
+Class,"Face.Face",,0,0,0,2,2
+Class,"FileDialog",61,0,0,0,7,7
+Class,"FileNameStringSplitter",0,0,0,0,3,3
+Class,"FindReplaceDlg",80,2,4,0,67,18
+Class,"FolderStyleDialog",0,3,4,0,65,6
+Class,"Font",25,0,2,2,12,12
+Class,"FontCached",65,1,2,0,19,7
+Class,"FontCached",60,1,0,0,18,6
+Class,"FontHandle",60,0,0,0,5,5
+Class,"FontNames",37,0,0,0,4,4
+Class,"FormatEnumerator",0,0,0,0,1,1
+Class,"GlobalStyleDlg",56,2,5,0,54,5
+Class,"GoToLineDlg",66,2,1,0,58,9
+Class,"HereDocCls",66,0,0,0,2,2
+Class,"HereDocCls",60,0,0,0,2,2
+Class,"IconList",60,0,0,0,8,8
+Class,"IconLists",0,0,1,1,2,2
+Class,"Idler",0,0,0,0,1,1
+Class,"Indicator",0,0,5,0,2,2
+Class,"KeyMap",40,0,1,0,5,5
+Class,"KeyToCommand",0,0,0,0,0,0
+Class,"KeyWordsStyleDialog",0,3,4,0,65,6
+Class,"LMMinder",0,0,1,0,1,1
+Struct,"LOGFONT",0,0,0,0,0,0
+Struct,"Lang",72,0,0,0,9,9
+Class,"LastRecentFileList",19,0,1,0,5,5
+Class,"LexerLibrary",46,0,4,0,3,3
+Class,"LexerManager",61,0,1,0,7,7
+Class,"LexerMinder",0,0,1,0,0,0
+Class,"LexerModule",70,0,3,1,8,8
+Struct,"LexerStyler",62,1,0,0,17,8
+Struct,"LexerStylerArray",27,0,4,0,9,9
+Struct,"LineData",0,0,1,0,1,1
+Class,"LineLayout",77,0,1,0,9,9
+Class,"LineLayoutCache",53,0,1,0,10,10
+Class,"LineMarker",25,0,10,0,8,8
+Class,"LineToType",26,0,0,0,5,5
+Class,"LineVector",57,0,3,0,15,15
+Abstract Class,"ListBox",0,1,5,2,54,22
+Class,"ListBoxX",85,2,6,0,72,18
+Class,"ListBoxX",79,2,7,0,76,22
+Struct,"ListImage",0,0,0,0,0,0
+Class,"ListView",86,1,0,0,51,10
+Class,"MarginStyle",0,0,0,0,1,1
+Struct,"MarkerHandleNumber",0,0,0,0,0,0
+Class,"MarkerHandleSet",0,0,1,0,10,10
+Class,"Menu",22,0,3,0,9,9
+Class,"Notepad_plus",91,1,36,0,121,89
+Struct,"NotifyHeader",0,0,0,0,0,0
+Struct,"NppGUI",43,0,0,0,2,2
+Class,"NppParameters",92,0,14,0,64,64
+Class,"OneLine",50,0,0,0,2,2
+Class,"PRectangle",12,0,1,0,8,8
+Class,"Palette",52,0,5,0,10,10
+Class,"Platform",0,0,1,0,45,45
+Class,"Point",66,0,1,0,3,3
+Struct,"Position",0,0,0,0,0,0
+Class,"Printer",22,0,3,0,3,3
+Class,"Process",75,0,1,0,19,19
+Class,"Process",71,0,1,0,18,18
+Class,"ProcessThread",50,0,2,0,4,4
+Class,"PropSet",78,0,2,0,19,19
+Struct,"Property",0,0,0,0,1,1
+Class,"QuoteCls",41,0,0,0,3,3
+Class,"QuoteCls",41,0,0,0,3,3
+Class,"RESearch",75,0,1,0,12,12
+Class,"Range",0,0,0,0,7,7
+Struct,"RangeToFormat",0,0,2,0,0,0
+Struct,"RangeToFormat",0,0,1,0,0,0
+Struct,"Relative",0,0,1,0,2,2
+Class,"RunDlg",50,2,1,0,55,6
+Class,"SBuffer",0,1,0,0,11,6
+Struct,"SCNotification",0,0,1,0,0,0
+Class,"SContainer",40,0,0,2,5,5
+Class,"SString",60,1,1,0,48,43
+Class,"SVector",30,0,0,0,9,9
+Abstract Class,"ScintillaBase",78,2,18,2,212,28
+Class,"ScintillaEditView",94,1,14,0,135,103
+Class,"ScintillaGTK",98,3,18,0,305,93
+Struct,"ScintillaViewParams",14,0,0,0,1,1
+Class,"ScintillaWin",94,3,21,0,269,57
+Class,"SelectionLineIterator",50,0,3,0,5,5
+Class,"SelectionText",33,0,0,0,6,6
+Abstract Class,"SharedParametersDialog",85,2,8,5,59,10
+Class,"Splitter",78,1,0,0,61,20
+Class,"SplitterContainer",72,1,1,0,54,13
+Abstract Class,"StaticControl",0,1,0,0,44,3
+Abstract Class,"StaticDialog",0,1,0,9,49,8
+Class,"StatusBar",58,1,0,0,50,9
+Class,"StringDlg",60,2,0,0,54,5
+Class,"Style",72,0,6,0,13,13
+Struct,"Style",76,0,6,0,13,13
+Struct,"StyleArray",16,0,3,1,9,9
+Class,"StyleContext",67,0,1,0,18,18
+Abstract Class,"Surface",0,0,6,2,40,40
+Class,"SurfaceImpl",91,1,8,0,79,39
+Class,"SurfaceImpl",85,1,6,0,80,40
+Class,"SymbolsStyleDialog",85,3,8,0,69,10
+Class,"TabBar",89,1,1,2,63,31
+Struct,"TextRange",0,0,1,0,0,0
+Struct,"TextToFind",0,0,1,0,0,0
+Class,"TiXmlAttribute",67,1,4,0,39,21
+Class,"TiXmlAttributeSet",0,0,2,0,7,7
+Abstract Class,"TiXmlBase",88,0,4,2,18,18
+Private Struct,"TiXmlBase::Entity",0,0,0,0,0,0
+Protected Class,"TiXmlBase::StringToBuffer",0,0,1,0,2,2
+Class,"TiXmlComment",0,2,4,0,65,6
+Struct,"TiXmlCursor",50,0,0,0,2,2
+Class,"TiXmlDeclaration",30,2,5,0,69,10
+Class,"TiXmlDocument",79,2,6,0,81,22
+Class,"TiXmlElement",23,2,7,0,76,17
+Class,"TiXmlHandle",0,0,3,0,13,13
+Abstract Class,"TiXmlNode",79,1,7,6,59,41
+Class,"TiXmlOutStream",0,1,0,0,29,3
+Class,"TiXmlParsingData",22,0,1,0,3,3
+Class,"TiXmlString",48,0,0,1,26,26
+Class,"TiXmlText",0,2,3,0,66,7
+Class,"TiXmlUnknown",0,2,4,0,65,6
+Class,"Timer",0,0,0,0,1,1
+Class,"ToolBar",79,1,2,0,60,19
+Class,"ToolBarIcons",73,1,2,0,16,14
+Class,"TreeView",0,1,0,0,46,5
+Class,"URLCtrl",42,1,0,0,46,5
+Class,"UndoHistory",56,0,1,0,18,18
+Class,"UserDefineDialog",87,3,12,0,86,27
+Class,"UserLangContainer",35,0,1,0,5,5
+Class,"Utf16_Iter",61,1,0,0,7,7
+Class,"Utf8_16",0,0,0,4,0,0
+Class,"Utf8_16_Read",54,1,1,0,6,6
+Class,"Utf8_16_Write",46,1,1,0,6,6
+Class,"Utf8_Iter",62,1,0,0,9,9
+Class,"ValueDlg",64,2,0,0,56,7
+Class,"ViewStyle",69,0,11,0,10,10
+Class,"Window",62,0,3,16,32,32
+Abstract Class,"Window",87,0,3,15,41,41
+Class,"WindowAccessor",81,1,3,0,50,24
+Class,"WindowInterface",0,1,0,0,43,2
+Class,"WordList",49,0,1,0,11,11
+Class,"WordStyleDlg",81,2,8,0,68,19
+Class,"XPM",73,0,6,0,17,17
+Class,"XPMSet",34,0,1,0,7,7
+Struct,"iconLocator",0,0,0,0,1,1
