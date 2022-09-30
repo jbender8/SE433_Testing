@@ -1,0 +1,74 @@
+/*
+this file is part of notepad++
+Copyright (C)2003 Don HO ( donho@altern.org )
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+*/
+
+#ifndef FIND_REPLACE_DLG_RC
+#define FIND_REPLACE_DLG_RC
+#include <windows.h>
+#include "FindReplaceDlg_rc.h"
+
+IDD_FIND_REPLACE_DLG DIALOGEX 36, 44, 321, 166
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | DS_FIXEDSYS | WS_POPUP | 
+    WS_CAPTION
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Replace"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    LTEXT           "Find what :",IDFINDWHAT_STATIC,5,7,55,8
+    COMBOBOX        IDFINDWHAT,83,5,125,50,CBS_DROPDOWN | CBS_AUTOHSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "Re&place with :",ID_STATICTEXT_REPLACE,5,25,55,8
+    COMBOBOX        IDREPLACEWITH,83,24,125,50,CBS_DROPDOWN | 
+                    CBS_AUTOHSCROLL | WS_TABSTOP
+    CONTROL         "Match &whole word only",IDWHOLEWORD,"Button",
+                    BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,5,70,110,10
+    CONTROL         "Match &case",IDMATCHCASE,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,5,82,110,10
+    CONTROL         "Regular &expression",IDREGEXP,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,5,94,110,10
+    CONTROL         "Wrap aroun&d",IDWRAP,"Button",BS_AUTOCHECKBOX | 
+                    WS_GROUP | WS_TABSTOP,5,106,110,10
+    GROUPBOX        "Direction",IDC_DIR_STATIC,150,71,60,34,WS_GROUP
+    CONTROL         "&Up",IDDIRECTIONUP,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,155,79,45,12
+    CONTROL         "&Down",IDDIRECTIONDOWN,"Button",BS_AUTORADIOBUTTON,155,
+                    91,45,12
+    DEFPUSHBUTTON   "Find Next",IDOK,217,5,90,14,WS_GROUP
+    PUSHBUTTON      "&Replace",IDREPLACE,217,23,90,14
+    PUSHBUTTON      "Replace &All",IDREPLACEALL,217,41,90,14
+    PUSHBUTTON      "Close",IDCANCEL,217,59,90,14
+    PUSHBUTTON      "Count",IDCCOUNTALL,217,23,90,14
+    PUSHBUTTON      "Find All",IDCMARKALL,106,28,75,14
+    CONTROL         "Mark Line",IDC_MARKLINE_CHECK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,13,30,88,10
+    CONTROL         "Style found token",IDC_STYLEFOUND_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,47,87,10
+    GROUPBOX        "",IDC_FINDALL_STATIC,7,19,201,45
+    CONTROL         "Purge for each search",IDC_PURGE_CHECK,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,106,47,99,10
+    CONTROL         "",IDC_PERCENTAGE_SLIDER,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | NOT WS_VISIBLE | WS_TABSTOP,257,150,53,10
+    CONTROL         "Transparent",IDC_TRANSPARENT_CHECK,"Button",
+                    BS_AUTOCHECKBOX | NOT WS_VISIBLE | WS_TABSTOP,258,138,55,
+                    10
+    GROUPBOX        "Display Position",IDC_DISPLAYPOS_STATIC,150,110,60,48
+    CONTROL         "Top",IDC_DISPLAYPOS_TOP,"Button",BS_AUTORADIOBUTTON,156, 122,28,10
+    CONTROL         "Middle",IDC_DISPLAYPOS_MIDDLE,"Button", BS_AUTORADIOBUTTON,156,134,36,10
+    CONTROL         "Bottom",IDC_DISPLAYPOS_BOTTOM,"Button", BS_AUTORADIOBUTTON,156,146,39,10
+END
+#endif //FIND_REPLACE_DLG_RC

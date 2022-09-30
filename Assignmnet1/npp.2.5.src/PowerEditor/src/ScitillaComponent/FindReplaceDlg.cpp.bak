@@ -1,0 +1,413 @@
+//this file is part of notepad++
+//Copyright (C)2003 Don HO ( donho@altern.org )
+//
+//This program is free software; you can redistribute it and/or
+//modify it under the terms of the GNU General Public License
+//as published by the Free Software Foundation; either
+//version 2 of the License, or (at your option) any later version.
+//
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+//
+//You should have received a copy of the GNU General Public License
+//along with this program; if not, write to the Free Software
+//Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+#include "FindReplaceDlg.h"
+#include "ScintillaEditView.h"
+#include "constant.h"
+
+void FindReplaceDlg::create(int dialogID) 
+{
+	StaticDialog::create(dialogID);
+	_currentStatus = REPLACE;
+
+	initOptionsFromDlg();
+
+	POINT p;
+	//get screen coordonnees (x,y)
+	::GetWindowRect(::GetDlgItem(_hSelf, IDREPLACEALL), &_replaceCancelPos);
+	// set point (x,y)
+	p.x = _replaceCancelPos.left;
+	p.y = _replaceCancelPos.top;
+	// convert screen coordonnees to client coordonnees
+	::ScreenToClient(_hSelf, &p);
+	// get the width and height
+	::GetClientRect(::GetDlgItem(_hSelf, IDREPLACE), &_replaceCancelPos);
+	// fill out _replaceCancelPos
+	_replaceCancelPos.left = p.x;
+	_replaceCancelPos.top = p.y;
+	
+	::GetWindowRect(::GetDlgItem(_hSelf, IDCANCEL), &_findCancelPos);
+	p.x = _findCancelPos.left;
+	p.y = _findCancelPos.top;
+	::ScreenToClient(_hSelf, &p);
+	::GetClientRect(::GetDlgItem(_hSelf, IDCANCEL), &_findCancelPos);
+	_findCancelPos.left = p.x;
+	_findCancelPos.top = p.y;
+
+	if ((NppParameters::getInstance())->isTransparentAvailable())
+	{
+		::ShowWindow(::GetDlgItem(_hSelf, IDC_TRANSPARENT_CHECK), SW_SHOW);
+		::ShowWindow(::GetDlgItem(_hSelf, IDC_PERCENTAGE_SLIDER), SW_SHOW);
+		
+		::SendDlgItemMessage(_hSelf, IDC_PERCENTAGE_SLIDER, TBM_SETRANGE, FALSE, MAKELONG(20, 200));
+		::SendDlgItemMessage(_hSelf, IDC_PERCENTAGE_SLIDER, TBM_SETPOS, TRUE, 150);
+		if (!isCheckedOrNot(IDC_PERCENTAGE_SLIDER))
+			::EnableWindow(::GetDlgItem(_hSelf, IDC_PERCENTAGE_SLIDER), FALSE);
+	}
+}
+
+BOOL CALLBACK FindReplaceDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message) 
+	{
+		case WM_HSCROLL :
+		{
+			if ((HWND)lParam == ::GetDlgItem(_hSelf, IDC_PERCENTAGE_SLIDER))
+			{
+				int percent = ::SendDlgItemMessage(_hSelf, IDC_PERCENTAGE_SLIDER, TBM_GETPOS, 0, 0);
+				(NppParameters::getInstance())->SetTransparent(_hSelf, percent/*HIWORD(wParam)*/);
+			}
+			return TRUE;
+		}
+
+		case WM_COMMAND : 
+		{
+			switch (wParam)
+			{
+				case IDCANCEL : // Close
+					display(false);
+					return TRUE;
+
+				case IDOK : // Find Next
+					processFindNext();
+					return TRUE;
+
+				case IDREPLACE :
+					processReplace();
+					return TRUE;
+
+				case IDREPLACEALL :
+					processAll(REPLACE_ALL);
+					return TRUE;
+				case IDCMARKALL :
+					processAll(MARK_ALL);
+					return TRUE;
+				case IDCCOUNTALL :
+					processAll(COUNT_ALL);
+					return TRUE;
+
+				case IDWHOLEWORD :
+					_isWholeWord = isCheckedOrNot(IDWHOLEWORD);
+					return TRUE;
+
+				case IDMATCHCASE :
+					_isMatchCase = isCheckedOrNot(IDMATCHCASE);
+					return TRUE;
+
+				case IDREGEXP :
+					_isRegExp = isCheckedOrNot(IDREGEXP);
+
+					if (_isRegExp)
+						_isWholeWord = false;
+					::SendDlgItemMessage(_hSelf, IDWHOLEWORD, BM_SETCHECK, _isWholeWord?BST_CHECKED:BST_UNCHECKED, 0);
+					::EnableWindow(::GetDlgItem(_hSelf, IDWHOLEWORD), (BOOL)!_isRegExp);
+
+					::SendDlgItemMessage(_hSelf, IDDIRECTIONUP, BM_SETCHECK, BST_UNCHECKED, 0);
+					::EnableWindow(::GetDlgItem(_hSelf, IDDIRECTIONUP), (BOOL)!_isRegExp);
+					::SendDlgItemMessage(_hSelf, IDDIRECTIONDOWN, BM_SETCHECK, BST_CHECKED, 0);
+					_whitchDirection = DIR_DOWN;
+					return TRUE;
+
+				case IDWRAP :
+					_isWrapAround = isCheckedOrNot(IDWRAP);
+					return TRUE;
+
+				case IDDIRECTIONUP :
+				case IDDIRECTIONDOWN :
+					_whitchDirection = (BST_CHECKED == ::SendMessage(::GetDlgItem(_hSelf, IDDIRECTIONDOWN), BM_GETCHECK, BST_CHECKED, 0));
+					return TRUE;
+
+				case IDC_PURGE_CHECK :
+					_doPurge = isCheckedOrNot(IDC_PURGE_CHECK);
+					return TRUE;
+
+				case IDC_MARKLINE_CHECK :
+					_doMarkLine = isCheckedOrNot(IDC_MARKLINE_CHECK);
+					::EnableWindow(::GetDlgItem(_hSelf, IDCMARKALL), (_doMarkLine || _doStyleFoundToken));
+					return TRUE;
+
+				case IDC_STYLEFOUND_CHECK :
+					_doStyleFoundToken = isCheckedOrNot(IDC_STYLEFOUND_CHECK);
+					::EnableWindow(::GetDlgItem(_hSelf, IDCMARKALL), (_doMarkLine || _doStyleFoundToken));
+					return TRUE;
+
+				case IDC_TRANSPARENT_CHECK :
+				{
+					bool isChecked = isCheckedOrNot(IDC_TRANSPARENT_CHECK);
+					if (isChecked)
+					{
+						int percent = ::SendDlgItemMessage(_hSelf, IDC_PERCENTAGE_SLIDER, TBM_GETPOS, 0, 0);
+						(NppParameters::getInstance())->SetTransparent(_hSelf, percent);
+					}
+					else
+						(NppParameters::getInstance())->removeTransparent(_hSelf);
+
+					::EnableWindow(::GetDlgItem(_hSelf, IDC_PERCENTAGE_SLIDER), isChecked);
+					return TRUE;
+				}
+
+				default :
+					break;
+			}
+		}
+	}
+	return FALSE;
+}
+
+// return value :
+// true  : the text2find is found
+// false : the text2find is not found
+bool FindReplaceDlg::processFindNext()
+{	
+	if (!isCreated()) return false;
+
+	getSearchTexts();
+	
+	int docLength = int((*_ppEditView)->execute(SCI_GETLENGTH));
+
+	CharacterRange cr = (*_ppEditView)->getSelection();
+
+	int startPosition = cr.cpMax;
+	int endPosition = docLength;
+
+	if (_whitchDirection == DIR_UP)
+	{
+		startPosition = cr.cpMin - 1;
+		endPosition = 0;
+	}
+
+	int flags = (_isWholeWord ? SCFIND_WHOLEWORD : 0) |
+	            (_isMatchCase ? SCFIND_MATCHCASE : 0) |
+	            (_isRegExp ? SCFIND_REGEXP : 0);
+
+	(*_ppEditView)->execute(SCI_SETTARGETSTART, startPosition);
+	(*_ppEditView)->execute(SCI_SETTARGETEND, endPosition);
+	(*_ppEditView)->execute(SCI_SETSEARCHFLAGS, flags);
+
+	setSearchText(_text2Find);
+	int posFind = int((*_ppEditView)->execute(SCI_SEARCHINTARGET, (WPARAM)strlen(_text2Find), (LPARAM)_text2Find));
+	if (posFind == -1) //return;
+	{
+		if (_isWrapAround) 
+		{
+			if (_whitchDirection == DIR_DOWN)
+			{
+				startPosition = 0;
+				endPosition = docLength;
+			}
+			else
+			{
+				startPosition = docLength;
+				endPosition = 0;
+			}
+			(*_ppEditView)->execute(SCI_SETTARGETSTART, startPosition);
+			(*_ppEditView)->execute(SCI_SETTARGETEND, endPosition);
+			int posFind = int((*_ppEditView)->execute(SCI_SEARCHINTARGET, (WPARAM)strlen(_text2Find), (LPARAM)_text2Find));
+			if (posFind == -1)
+			{
+				::MessageBox(_hSelf, "Can't find the word", "Find", MB_OK);
+				return false;
+			}
+			int start = int((*_ppEditView)->execute(SCI_GETTARGETSTART));
+			int end = int((*_ppEditView)->execute(SCI_GETTARGETEND));
+			(*_ppEditView)->execute(SCI_SETSEL, start, end);
+		}
+		else
+		{
+			::MessageBox(_hSelf, "Can't find the word", "Find", MB_OK);
+			// if the dialog is not shown, pass the focus to his parent(ie. Notepad++)
+			if (!::IsWindowVisible(_hSelf))
+				::SetFocus((*_ppEditView)->getHSelf());
+
+			return false;
+		}
+	}
+	int start = int((*_ppEditView)->execute(SCI_GETTARGETSTART));
+	int end = int((*_ppEditView)->execute(SCI_GETTARGETEND));
+	(*_ppEditView)->execute(SCI_SETSEL, start, end);
+	int firstVisibleLine = (*_ppEditView)->execute(EM_GETFIRSTVISIBLELINE);
+	int currentlineNumber = (*_ppEditView)->execute(SCI_LINEFROMPOSITION, posFind);
+	(*_ppEditView)->execute(SCI_LINESCROLL, 0, (currentlineNumber-firstVisibleLine)/2);
+	return true;
+}
+
+// return value :
+// true  : the text is replaced, and find the next occurrence
+// false : the text2find is not found, so the text is NOT replace
+//      || the text is replaced, and do NOT find the next occurrence
+bool FindReplaceDlg::processReplace()
+{
+	TextRange tr;
+	char text[1024];
+	tr.chrg = (*_ppEditView)->getSelection();
+	tr.lpstrText = text;
+	
+	getSearchTexts() ;
+	getReplaceTexts();
+
+	(*_ppEditView)->execute(SCI_GETTEXTRANGE, 0, (LPARAM)&tr);
+	//::MessageBox(NULL, _text2Find, tr.lpstrText, MB_OK);
+	
+	bool isSelectedMatch;// = (_isMatchCase)?(!strcmp(_text2Find, tr.lpstrText)):(!stricmp(_text2Find, tr.lpstrText));
+
+	if (_isMatchCase)
+	{
+		isSelectedMatch = !strcmp(_text2Find, tr.lpstrText);
+	}
+	else
+	{
+		isSelectedMatch = !stricmp(_text2Find, tr.lpstrText);
+	}
+	//if (_isRegExp) isSelectedMatch = true;
+
+	if (isSelectedMatch)
+	{
+		//::MessageBox(NULL, "YES!!!", "titre", MB_OK);
+		(*_ppEditView)->execute(SCI_REPLACESEL, 0, (LPARAM)_replaceText);
+	}
+	else // No match
+	{
+		if (processFindNext())
+			(*_ppEditView)->execute(SCI_REPLACESEL, 0, (LPARAM)_replaceText);
+		else
+			return false;
+	}
+	return processFindNext();
+}
+
+void FindReplaceDlg::processAll(int op)
+{
+	if (!isCreated()) return;
+	int nbReplaced = 0;
+
+	getSearchTexts();
+	getReplaceTexts() ;
+	
+	int docLength = int((*_ppEditView)->execute(SCI_GETLENGTH));
+
+	CharacterRange cr = (*_ppEditView)->getSelection();
+
+	// Par default : 
+	//        direction : bas
+	//        commence par : cursor pos
+	//        fini par : fin doc
+	int startPosition = cr.cpMin;
+	int endPosition = docLength;
+
+	// si wrap arround : 
+	//        direction : bas
+	//        commence par : debut doc
+	//        fini par : fin doc
+	if (_isWrapAround) 
+	{		
+		startPosition = 0;
+		endPosition = docLength;
+	}
+
+	// si (non wrap arround) && (direction vers le haut) : 
+	//        direction : haut
+	//        commence par : cursor pos
+	//        fini par : debut doc
+	else if (_whitchDirection == DIR_UP)
+	{
+		startPosition = cr.cpMax;
+		endPosition = 0;
+	}
+
+	int flags = (_isWholeWord ? SCFIND_WHOLEWORD : 0) |
+	            (_isMatchCase ? SCFIND_MATCHCASE : 0) |
+	            (_isRegExp ? SCFIND_REGEXP : 0);
+
+	(*_ppEditView)->execute(SCI_SETTARGETSTART, startPosition);
+	(*_ppEditView)->execute(SCI_SETTARGETEND, endPosition);
+	(*_ppEditView)->execute(SCI_SETSEARCHFLAGS, flags);
+
+	setSearchText(_text2Find);
+	if (!_text2Find[0])
+		return;
+
+	char str[256];
+	if (op == REPLACE_ALL)
+		strcpy(str, " tokens are replaced");
+
+	else if (op == MARK_ALL)
+	{
+		strcpy(str, " tokens are found and marked");
+
+		if (_doStyleFoundToken)
+		{
+			if (_doPurge)
+				(*_ppEditView)->defineDocType(L_CPP);
+			(*_ppEditView)->defineDocType(L_TXT);
+		}
+		if ((_doMarkLine) && (_doPurge))
+		{
+			(*_ppEditView)->execute(SCI_MARKERDELETEALL, MARK_SYMBOLE);
+		}
+
+	}
+	else
+		strcpy(str, " tokens are found.");			
+
+	int posFind = int((*_ppEditView)->execute(SCI_SEARCHINTARGET, (WPARAM)strlen(_text2Find), (LPARAM)_text2Find));
+	
+	while (posFind != -1)
+	{
+		int start = int((*_ppEditView)->execute(SCI_GETTARGETSTART));
+		int end = int((*_ppEditView)->execute(SCI_GETTARGETEND));
+		if (op == REPLACE_ALL)
+		{
+			(*_ppEditView)->execute(SCI_SETSEL, start, end);
+			(*_ppEditView)->execute(SCI_REPLACESEL, 0, (LPARAM)_replaceText);
+		}
+		else if (op == MARK_ALL)
+		{
+			if (_doStyleFoundToken)
+			{
+				(*_ppEditView)->execute(SCI_STARTSTYLING,  start,  31);
+				(*_ppEditView)->execute(SCI_SETSTYLING,  end - start,  SCE_UNIVERSAL_FOUND_STYLE);
+				(*_ppEditView)->execute(SCI_COLOURISE,start, end+1);
+			}
+
+			if (_doMarkLine)
+			{
+				int lineNumber = (*_ppEditView)->execute(SCI_LINEFROMPOSITION, posFind);
+				int state = (*_ppEditView)->execute(SCI_MARKERGET, lineNumber);
+
+				if (!(state & (1 << MARK_SYMBOLE)))
+					(*_ppEditView)->execute(SCI_MARKERADD, lineNumber, MARK_SYMBOLE);
+			}
+		
+		}
+		// else : foutre rien (sa race!!!)
+
+        startPosition = (_whitchDirection == DIR_UP)?posFind - strlen(_text2Find):posFind + strlen(_text2Find);
+		(*_ppEditView)->execute(SCI_SETTARGETSTART, startPosition);
+		(*_ppEditView)->execute(SCI_SETTARGETEND, endPosition);
+		(*_ppEditView)->execute(SCI_SETSEARCHFLAGS, flags);
+		posFind = int((*_ppEditView)->execute(SCI_SEARCHINTARGET, (WPARAM)strlen(_text2Find), (LPARAM)_text2Find));
+		
+		nbReplaced++;
+	}
+	//char s[256];// = "find/replace operation is done\r\r";
+    char result[256];
+    itoa(nbReplaced, result, 10);
+    //strcat(s, result);
+    strcat(result, str);
+	::MessageBox(_hSelf, result, "", MB_OK);
+	return;
+}
